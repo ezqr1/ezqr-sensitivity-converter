@@ -1,0 +1,1377 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ezqr's Sensitivity Converter</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 30px 15px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 44px;
+            margin: 20px 0 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #999;
+            font-size: 17px;
+            margin-bottom: 35px;
+        }
+
+        .converter {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1fr 70px 1fr;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 14px;
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 7px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: #888;
+        }
+
+        .swap-button {
+            height: 48px;
+            margin-bottom: 20px;
+            padding: 0;
+            background: #292929;
+            color: white;
+            border: 1px solid #444;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 7px;
+            background: white;
+            color: black;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .convert-button {
+            margin-top: 5px;
+        }
+
+        .result {
+            display: none;
+            margin-top: 25px;
+            padding: 28px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .result-label {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        #resultSensitivity {
+            font-size: 43px;
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        .copy-button {
+            max-width: 220px;
+            margin: 18px auto 0;
+            background: #292929;
+            color: white;
+            border: 1px solid #444;
+            font-size: 15px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .stat {
+            background: #1c1c1c;
+            border: 1px solid #292929;
+            border-radius: 8px;
+            padding: 15px 8px;
+        }
+
+        .stat-title {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .info {
+            margin-top: 25px;
+            padding: 16px;
+            background: #161616;
+            border-radius: 8px;
+            border: 1px solid #292929;
+            color: #888;
+            font-size: 13px;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .warning {
+            display: none;
+            margin-top: 15px;
+            padding: 13px;
+            background: #201c12;
+            border: 1px solid #4a3c20;
+            border-radius: 7px;
+            color: #c5ad73;
+            font-size: 13px;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .section-title {
+            color: #aaa;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 8px 0 12px;
+        }
+
+        .dpi-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .minecraft-note {
+            color: #777;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        @media (max-width: 700px) {
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .converter {
+                padding: 20px;
+            }
+
+            .game-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .swap-button {
+                margin: -5px 0 15px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .dpi-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Ezqr's Sensitivity Converter</h1>
+
+    <p class="subtitle">
+        Match your mouse feel across games using the same physical cm/360°.
+    </p>
+
+    <div class="converter">
+
+        <div class="section-title">
+            Games
+        </div>
+
+        <div class="game-grid">
+
+            <div class="field">
+
+                <label for="fromGame">
+                    FROM
+                </label>
+
+                <select id="fromGame">
+
+                    <option value="cs2">
+                        Counter-Strike 2
+                    </option>
+
+                    <option value="valorant">
+                        Valorant
+                    </option>
+
+                    <option value="apex">
+                        Apex Legends
+                    </option>
+
+                    <option value="overwatch">
+                        Overwatch 2
+                    </option>
+
+                    <option value="cod">
+                        Call of Duty / Warzone
+                    </option>
+
+                    <option value="fortnite">
+                        Fortnite
+                    </option>
+
+                    <option value="rainbow6">
+                        Rainbow Six Siege
+                    </option>
+
+                    <option value="thefinals">
+                        THE FINALS
+                    </option>
+
+                    <option value="roblox">
+                        Roblox
+                    </option>
+
+                    <option value="minecraft">
+                        Minecraft Java Edition
+                    </option>
+
+                </select>
+
+            </div>
+
+            <button
+                class="swap-button"
+                onclick="swapGames()"
+                title="Swap games">
+                ⇄
+            </button>
+
+            <div class="field">
+
+                <label for="toGame">
+                    TO
+                </label>
+
+                <select id="toGame">
+
+                    <option value="valorant">
+                        Valorant
+                    </option>
+
+                    <option value="cs2">
+                        Counter-Strike 2
+                    </option>
+
+                    <option value="apex">
+                        Apex Legends
+                    </option>
+
+                    <option value="overwatch">
+                        Overwatch 2
+                    </option>
+
+                    <option value="cod">
+                        Call of Duty / Warzone
+                    </option>
+
+                    <option value="fortnite">
+                        Fortnite
+                    </option>
+
+                    <option value="rainbow6">
+                        Rainbow Six Siege
+                    </option>
+
+                    <option value="thefinals">
+                        THE FINALS
+                    </option>
+
+                    <option value="roblox">
+                        Roblox
+                    </option>
+
+                    <option value="minecraft">
+                        Minecraft Java Edition
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="section-title">
+            Sensitivity
+        </div>
+
+        <div class="field">
+
+            <label for="sensitivity">
+                Source Sensitivity
+            </label>
+
+            <input
+                id="sensitivity"
+                type="number"
+                min="0"
+                step="any"
+                value="1"
+                placeholder="Enter sensitivity">
+
+            <div
+                id="minecraftNote"
+                class="minecraft-note"
+                style="display:none;">
+                Minecraft uses its internal 0.00–1.00 sensitivity value.
+                0.50 = 50% in-game.
+            </div>
+
+        </div>
+
+        <div class="dpi-row">
+
+            <div class="field">
+
+                <label for="sourceDpi">
+                    Source DPI
+                </label>
+
+                <input
+                    id="sourceDpi"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value="800">
+
+            </div>
+
+            <div class="field">
+
+                <label for="targetDpi">
+                    Target DPI
+                </label>
+
+                <input
+                    id="targetDpi"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value="800">
+
+            </div>
+
+        </div>
+
+        <button
+            class="convert-button"
+            onclick="convertSensitivity()">
+            CONVERT SENSITIVITY
+        </button>
+
+        <div
+            id="warning"
+            class="warning">
+        </div>
+
+        <div
+            id="result"
+            class="result">
+
+            <div class="result-label">
+                TARGET SENSITIVITY
+            </div>
+
+            <div id="resultSensitivity">
+                -
+            </div>
+
+            <button
+                class="copy-button"
+                onclick="copyResult()">
+                COPY SENSITIVITY
+            </button>
+
+            <div class="stats">
+
+                <div class="stat">
+
+                    <div class="stat-title">
+                        CM / 360°
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="cm360">
+                        -
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-title">
+                        IN / 360°
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="in360">
+                        -
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-title">
+                        TARGET eDPI
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="targetEdpi">
+                        -
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="info">
+
+                <strong>How this works</strong><br><br>
+
+                The converter matches your physical mouse
+                movement by keeping your <strong>cm/360°</strong>
+                the same between games.
+
+                Different games use different sensitivity
+                scales, so the sensitivity number itself
+                cannot be compared directly.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    /*
+    ============================================================
+    EZQR'S SENSITIVITY CONVERTER
+    ============================================================
+
+    Standard FPS games:
+
+        degreesPerCount =
+            sensitivity × yaw
+
+        cm360 =
+            (360 × 2.54) /
+            (DPI × degreesPerCount)
+
+    Therefore:
+
+        targetSens =
+            sourceSens ×
+            sourceYaw × sourceDPI /
+            (targetYaw × targetDPI)
+
+    Minecraft Java is different.
+
+    Minecraft's camera multiplier is:
+
+        (0.6 × sensitivity + 0.2)^3 × 1.2
+
+    This is used directly as the degrees-per-mouse-count
+    multiplier.
+
+    To convert INTO Minecraft, the formula is inverted.
+
+    ============================================================
+    */
+
+
+    const games = {
+
+        cs2: {
+            name: "Counter-Strike 2",
+            type: "yaw",
+            yaw: 0.022
+        },
+
+        valorant: {
+            name: "Valorant",
+            type: "yaw",
+            yaw: 0.07
+        },
+
+        apex: {
+            name: "Apex Legends",
+            type: "yaw",
+            yaw: 0.022
+        },
+
+        overwatch: {
+            name: "Overwatch 2",
+            type: "yaw",
+            yaw: 0.0066
+        },
+
+        cod: {
+            name: "Call of Duty / Warzone",
+            type: "yaw",
+            yaw: 0.0066
+        },
+
+        /*
+        Fortnite's standard X/Y sensitivity scale
+        uses approximately 0.005555 degrees/count.
+        */
+
+        fortnite: {
+            name: "Fortnite",
+            type: "yaw",
+            yaw: 0.005555
+        },
+
+        /*
+        Rainbow Six Siege hip-fire.
+        Scoped sensitivities are separate.
+        */
+
+        rainbow6: {
+            name: "Rainbow Six Siege",
+            type: "yaw",
+            yaw: 0.00572958
+        },
+
+        thefinals: {
+            name: "THE FINALS",
+            type: "yaw",
+            yaw: 0.0066
+        },
+
+        /*
+        Roblox does not have one universal sensitivity
+        setting across every Roblox experience.
+
+        This value represents the commonly used Roblox
+        mouse-yaw model. Individual Roblox games can
+        implement their own sensitivity systems.
+        */
+
+        roblox: {
+            name: "Roblox",
+            type: "yaw",
+            yaw: 0.39783
+        },
+
+        /*
+        Minecraft Java Edition uses a nonlinear
+        sensitivity formula rather than a fixed yaw.
+        */
+
+        minecraft: {
+            name: "Minecraft Java Edition",
+            type: "minecraft"
+        }
+
+    };
+
+
+    /*
+    ============================================================
+    MINECRAFT EFFECTIVE YAW
+    ============================================================
+    */
+
+    function minecraftYaw(sensitivity) {
+
+        const f =
+            sensitivity * 0.6 + 0.2;
+
+        return (
+            f *
+            f *
+            f *
+            1.2
+        );
+
+    }
+
+
+    /*
+    ============================================================
+    CONVERT MINECRAFT YAW BACK INTO SENSITIVITY
+    ============================================================
+    */
+
+    function minecraftSensitivityFromYaw(yaw) {
+
+        if (yaw <= 0) {
+
+            return 0;
+
+        }
+
+        const cubeRoot =
+            Math.cbrt(
+                yaw / 1.2
+            );
+
+        const sensitivity =
+            (
+                cubeRoot - 0.2
+            ) / 0.6;
+
+        return sensitivity;
+
+    }
+
+
+    /*
+    ============================================================
+    GET EFFECTIVE YAW
+    ============================================================
+    */
+
+    function getEffectiveYaw(game, sensitivity) {
+
+        if (
+            game.type === "minecraft"
+        ) {
+
+            return minecraftYaw(
+                sensitivity
+            );
+
+        }
+
+        return game.yaw;
+
+    }
+
+
+    /*
+    ============================================================
+    CONVERT
+    ============================================================
+    */
+
+    function convertSensitivity() {
+
+        const fromKey =
+            document.getElementById(
+                "fromGame"
+            ).value;
+
+        const toKey =
+            document.getElementById(
+                "toGame"
+            ).value;
+
+        const sourceSensitivity =
+            Number(
+                document.getElementById(
+                    "sensitivity"
+                ).value
+            );
+
+        const sourceDpi =
+            Number(
+                document.getElementById(
+                    "sourceDpi"
+                ).value
+            );
+
+        const targetDpi =
+            Number(
+                document.getElementById(
+                    "targetDpi"
+                ).value
+            );
+
+
+        if (
+            !Number.isFinite(
+                sourceSensitivity
+            ) ||
+            sourceSensitivity <= 0
+        ) {
+
+            alert(
+                "Enter a valid sensitivity."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !Number.isFinite(sourceDpi) ||
+            sourceDpi <= 0
+        ) {
+
+            alert(
+                "Enter a valid source DPI."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !Number.isFinite(targetDpi) ||
+            targetDpi <= 0
+        ) {
+
+            alert(
+                "Enter a valid target DPI."
+            );
+
+            return;
+
+        }
+
+
+        const sourceGame =
+            games[fromKey];
+
+        const targetGame =
+            games[toKey];
+
+
+        /*
+        Minecraft Java sensitivity ranges
+        from 0 to 1 internally.
+        */
+
+        if (
+            fromKey === "minecraft" &&
+            sourceSensitivity > 1
+        ) {
+
+            alert(
+                "Minecraft sensitivity must be between 0 and 1. Example: 0.5 = 50%."
+            );
+
+            return;
+
+        }
+
+
+        /*
+        Minecraft cannot use exactly zero because
+        the effective rotation would be very small,
+        but the normal Minecraft minimum is supported.
+        */
+
+
+        const sourceYaw =
+            getEffectiveYaw(
+                sourceGame,
+                sourceSensitivity
+            );
+
+
+        /*
+        Physical mouse distance for 360 degrees.
+        */
+
+        const cm360 =
+            (
+                360 * 2.54
+            ) /
+            (
+                sourceDpi *
+                sourceYaw
+            );
+
+
+        /*
+        Required target effective yaw to preserve
+        exactly the same physical cm/360.
+        */
+
+        const targetYaw =
+            (
+                360 * 2.54
+            ) /
+            (
+                targetDpi *
+                cm360
+            );
+
+
+        let targetSensitivity;
+
+
+        /*
+        Convert into Minecraft.
+        */
+
+        if (
+            targetGame.type === "minecraft"
+        ) {
+
+            targetSensitivity =
+                minecraftSensitivityFromYaw(
+                    targetYaw
+                );
+
+            /*
+            Minecraft's practical slider range
+            is 0.00 to 1.00 internally.
+            */
+
+            if (
+                targetSensitivity < 0
+            ) {
+
+                targetSensitivity = 0;
+
+            }
+
+            if (
+                targetSensitivity > 1
+            ) {
+
+                targetSensitivity = 1;
+
+            }
+
+        }
+
+        /*
+        Convert into a normal yaw-based game.
+        */
+
+        else {
+
+            targetSensitivity =
+                targetYaw /
+                targetGame.yaw;
+
+        }
+
+
+        /*
+        Prevent displaying a negative or invalid result.
+        */
+
+        if (
+            !Number.isFinite(
+                targetSensitivity
+            ) ||
+            targetSensitivity < 0
+        ) {
+
+            alert(
+                "This conversion is outside the supported sensitivity range."
+            );
+
+            return;
+
+        }
+
+
+        const targetEdpi =
+            targetSensitivity *
+            targetDpi;
+
+
+        const inches360 =
+            cm360 / 2.54;
+
+
+        /*
+        Display Minecraft as a percentage too.
+        */
+
+        let displaySensitivity;
+
+
+        if (
+            toKey === "minecraft"
+        ) {
+
+            displaySensitivity =
+                targetSensitivity.toFixed(4) +
+                " (" +
+                (
+                    targetSensitivity * 100
+                ).toFixed(2) +
+                "%)";
+
+        }
+
+        else {
+
+            displaySensitivity =
+                formatSensitivity(
+                    targetSensitivity
+                );
+
+        }
+
+
+        document.getElementById(
+            "resultSensitivity"
+        ).textContent =
+            displaySensitivity;
+
+
+        document.getElementById(
+            "cm360"
+        ).textContent =
+            cm360.toFixed(2) +
+            " cm";
+
+
+        document.getElementById(
+            "in360"
+        ).textContent =
+            inches360.toFixed(2) +
+            " in";
+
+
+        document.getElementById(
+            "targetEdpi"
+        ).textContent =
+            targetEdpi.toFixed(2);
+
+
+        document.getElementById(
+            "result"
+        ).style.display =
+            "block";
+
+
+        updateWarning(
+            fromKey,
+            toKey
+        );
+
+    }
+
+
+    /*
+    ============================================================
+    FORMAT SENSITIVITY
+    ============================================================
+    */
+
+    function formatSensitivity(value) {
+
+        if (
+            value >= 100
+        ) {
+
+            return value.toFixed(2);
+
+        }
+
+        if (
+            value >= 10
+        ) {
+
+            return value.toFixed(3);
+
+        }
+
+        if (
+            value >= 1
+        ) {
+
+            return value.toFixed(4);
+
+        }
+
+        if (
+            value >= 0.1
+        ) {
+
+            return value.toFixed(5);
+
+        }
+
+        return value.toFixed(6);
+
+    }
+
+
+    /*
+    ============================================================
+    WARNINGS
+    ============================================================
+    */
+
+    function updateWarning(
+        fromKey,
+        toKey
+    ) {
+
+        const warning =
+            document.getElementById(
+                "warning"
+            );
+
+        let message = "";
+
+
+        if (
+            fromKey === "roblox" ||
+            toKey === "roblox"
+        ) {
+
+            message =
+                "Roblox does not have one universal sensitivity system across every experience. This conversion uses the commonly referenced Roblox yaw model. A specific Roblox game may use a different sensitivity implementation.";
+
+        }
+
+
+        if (
+            fromKey === "minecraft" ||
+            toKey === "minecraft"
+        ) {
+
+            if (message) {
+
+                message += "<br><br>";
+
+            }
+
+            message +=
+                "Minecraft Java uses a nonlinear sensitivity curve, so this converter mathematically matches the effective mouse rotation rather than simply multiplying the displayed sensitivity number.";
+
+        }
+
+
+        if (
+            fromKey === "rainbow6" ||
+            toKey === "rainbow6"
+        ) {
+
+            if (message) {
+
+                message += "<br><br>";
+
+            }
+
+            message +=
+                "Rainbow Six Siege conversion is for hip-fire sensitivity. ADS and scope sensitivities use separate multipliers.";
+
+        }
+
+
+        if (
+            fromKey === "fortnite" ||
+            toKey === "fortnite"
+        ) {
+
+            if (message) {
+
+                message += "<br><br>";
+
+            }
+
+            message +=
+                "Fortnite conversion matches the standard X/Y sensitivity scale. ADS, targeting and scoped sensitivities are not included.";
+
+        }
+
+
+        if (message) {
+
+            warning.innerHTML =
+                message;
+
+            warning.style.display =
+                "block";
+
+        }
+
+        else {
+
+            warning.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    /*
+    ============================================================
+    SWAP
+    ============================================================
+    */
+
+    function swapGames() {
+
+        const from =
+            document.getElementById(
+                "fromGame"
+            );
+
+        const to =
+            document.getElementById(
+                "toGame"
+            );
+
+
+        const oldFrom =
+            from.value;
+
+        from.value =
+            to.value;
+
+        to.value =
+            oldFrom;
+
+
+        updateMinecraftNote();
+
+
+        /*
+        If a result already exists,
+        immediately recalculate it.
+        */
+
+        if (
+            document.getElementById(
+                "result"
+            ).style.display === "block"
+        ) {
+
+            convertSensitivity();
+
+        }
+
+    }
+
+
+    /*
+    ============================================================
+    MINECRAFT UI NOTE
+    ============================================================
+    */
+
+    function updateMinecraftNote() {
+
+        const from =
+            document.getElementById(
+                "fromGame"
+            ).value;
+
+        const note =
+            document.getElementById(
+                "minecraftNote"
+            );
+
+
+        if (
+            from === "minecraft"
+        ) {
+
+            note.style.display =
+                "block";
+
+        }
+
+        else {
+
+            note.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    /*
+    ============================================================
+    COPY RESULT
+    ============================================================
+    */
+
+    async function copyResult() {
+
+        const text =
+            document.getElementById(
+                "resultSensitivity"
+            ).textContent;
+
+
+        /*
+        Only copy the actual numeric value.
+        */
+
+        let cleanText =
+            text.split(" ")[0];
+
+
+        try {
+
+            await navigator.clipboard.writeText(
+                cleanText
+            );
+
+
+            const button =
+                document.querySelector(
+                    ".copy-button"
+                );
+
+            const oldText =
+                button.textContent;
+
+            button.textContent =
+                "COPIED!";
+
+            setTimeout(
+                function() {
+
+                    button.textContent =
+                        oldText;
+
+                },
+                1200
+            );
+
+        }
+
+        catch (error) {
+
+            alert(
+                "Could not copy automatically."
+            );
+
+        }
+
+    }
+
+
+    /*
+    ============================================================
+    ENTER KEY
+    ============================================================
+    */
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                convertSensitivity();
+
+            }
+
+        }
+    );
+
+
+    /*
+    ============================================================
+    UPDATE UI WHEN GAME CHANGES
+    ============================================================
+    */
+
+    document.getElementById(
+        "fromGame"
+    ).addEventListener(
+        "change",
+        updateMinecraftNote
+    );
+
+
+    updateMinecraftNote();
+
+</script>
+
+</body>
+
+</html>
+```

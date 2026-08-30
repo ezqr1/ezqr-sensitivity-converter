@@ -1,1375 +1,3011 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
 
-    <title>Ezqr's Sensitivity Converter</title>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<title>Gaming Sensitivity Converter | Ezqr's Gaming Tools</title>
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: #111;
-            color: white;
-            font-family: Arial, sans-serif;
-            padding: 30px 15px;
-        }
+<meta
+    name="description"
+    content="Convert gaming mouse sensitivity between CS2, Valorant, Apex Legends, Fortnite, Overwatch 2, Rainbow Six Siege, Call of Duty and more. Calculate eDPI, cm/360° and inches/360°."
+>
 
-        .container {
-            width: 100%;
-            max-width: 850px;
-            margin: auto;
-        }
+<meta
+    name="keywords"
+    content="gaming sensitivity converter, sensitivity converter, CS2 sensitivity converter, Valorant sensitivity converter, Apex sensitivity converter, cm 360 calculator, eDPI calculator"
+>
 
-        h1 {
-            text-align: center;
-            font-size: 44px;
-            margin: 20px 0 8px;
-        }
+<meta name="theme-color" content="#080b12">
 
-        .subtitle {
-            text-align: center;
-            color: #999;
-            font-size: 17px;
-            margin-bottom: 35px;
-        }
+<style>
 
-        .converter {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 30px;
-        }
+/* =========================================================
+   EZQR'S GAMING TOOLS
+   SENSITIVITY CONVERTER
+   ========================================================= */
 
-        .game-grid {
-            display: grid;
-            grid-template-columns: 1fr 70px 1fr;
-            gap: 15px;
-            align-items: end;
-        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        .field {
-            margin-bottom: 20px;
-        }
+:root {
+    --bg: #07090e;
+    --bg-soft: #0a0e15;
+    --card: #0e131c;
+    --card-2: #111824;
+    --input: #080c12;
 
-        label {
-            display: block;
-            color: #aaa;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
+    --border: #202a39;
+    --border-hover: #34435a;
 
-        select,
-        input {
-            width: 100%;
-            padding: 14px;
-            background: #222;
-            color: white;
-            border: 1px solid #444;
-            border-radius: 7px;
-            font-size: 16px;
-            outline: none;
-        }
+    --text: #f4f7fb;
+    --text-soft: #c3cad6;
+    --muted: #8994a5;
 
-        select:focus,
-        input:focus {
-            border-color: #888;
-        }
+    --accent: #7c5cff;
+    --accent-light: #a18cff;
 
-        .swap-button {
-            height: 48px;
-            margin-bottom: 20px;
-            padding: 0;
-            background: #292929;
-            color: white;
-            border: 1px solid #444;
-        }
+    --green: #45d483;
+    --yellow: #ffd166;
+    --red: #ff6378;
 
-        button {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 7px;
-            background: white;
-            color: black;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    --radius: 16px;
+    --radius-large: 23px;
+}
 
-        button:hover {
-            opacity: 0.85;
-        }
+html {
+    scroll-behavior: smooth;
+}
 
-        .convert-button {
-            margin-top: 5px;
-        }
+body {
+    min-height: 100vh;
 
-        .result {
-            display: none;
-            margin-top: 25px;
-            padding: 28px;
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 10px;
-            text-align: center;
-        }
+    background:
+        radial-gradient(
+            circle at 50% -15%,
+            rgba(124, 92, 255, .16),
+            transparent 40%
+        ),
+        radial-gradient(
+            circle at 0% 100%,
+            rgba(80, 110, 255, .045),
+            transparent 30%
+        ),
+        var(--bg);
 
-        .result-label {
-            color: #999;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
+    color: var(--text);
 
-        #resultSensitivity {
-            font-size: 43px;
-            font-weight: bold;
-            word-break: break-word;
-        }
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
 
-        .copy-button {
-            max-width: 220px;
-            margin: 18px auto 0;
-            background: #292929;
-            color: white;
-            border: 1px solid #444;
-            font-size: 15px;
-        }
+    line-height: 1.5;
+}
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 22px;
-        }
+button,
+input,
+select {
+    font: inherit;
+}
 
-        .stat {
-            background: #1c1c1c;
-            border: 1px solid #292929;
-            border-radius: 8px;
-            padding: 15px 8px;
-        }
+button {
+    cursor: pointer;
+}
 
-        .stat-title {
-            color: #888;
-            font-size: 12px;
-            margin-bottom: 6px;
-        }
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
+}
 
-        .stat-value {
-            font-size: 17px;
-            font-weight: bold;
-        }
+.container {
+    width: min(1120px, calc(100% - 32px));
+    margin: auto;
+}
 
-        .info {
-            margin-top: 25px;
-            padding: 16px;
-            background: #161616;
-            border-radius: 8px;
-            border: 1px solid #292929;
-            color: #888;
-            font-size: 13px;
-            line-height: 1.6;
-            text-align: left;
-        }
 
-        .warning {
-            display: none;
-            margin-top: 15px;
-            padding: 13px;
-            background: #201c12;
-            border: 1px solid #4a3c20;
-            border-radius: 7px;
-            color: #c5ad73;
-            font-size: 13px;
-            line-height: 1.5;
-            text-align: left;
-        }
+/* =========================================================
+   HEADER
+   ========================================================= */
 
-        .section-title {
-            color: #aaa;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 8px 0 12px;
-        }
+.header {
+    text-align: center;
+    padding: 44px 0 30px;
+}
 
-        .dpi-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
 
-        .minecraft-note {
-            color: #777;
-            font-size: 12px;
-            margin-top: 6px;
-        }
+.brand-icon {
+    width: 40px;
+    height: 40px;
 
-        @media (max-width: 700px) {
+    display: grid;
+    place-items: center;
 
-            h1 {
-                font-size: 32px;
-            }
+    border-radius: 12px;
 
-            .converter {
-                padding: 20px;
-            }
+    background:
+        linear-gradient(
+            135deg,
+            var(--accent),
+            #593cff
+        );
 
-            .game-grid {
-                grid-template-columns: 1fr;
-            }
+    font-size: 18px;
+    font-weight: 900;
 
-            .swap-button {
-                margin: -5px 0 15px;
-            }
+    box-shadow:
+        0 10px 35px rgba(124, 92, 255, .28);
+}
 
-            .stats {
-                grid-template-columns: 1fr;
-            }
+.brand-name {
+    font-weight: 800;
+    letter-spacing: -.4px;
+}
 
-            .dpi-row {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+h1 {
+    font-size: clamp(34px, 6vw, 56px);
+    line-height: 1;
+    letter-spacing: -2px;
+    margin-bottom: 16px;
+}
+
+.hero-description {
+    max-width: 720px;
+    margin: auto;
+
+    color: var(--muted);
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   MAIN CONVERTER
+   ========================================================= */
+
+.converter {
+    padding: 24px;
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-large);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 22, 32, .98),
+            rgba(9, 13, 20, .98)
+        );
+
+    box-shadow:
+        0 30px 100px rgba(0, 0, 0, .34),
+        inset 0 1px rgba(255, 255, 255, .025);
+}
+
+
+/* =========================================================
+   GAME SELECTORS
+   ========================================================= */
+
+.game-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        56px
+        minmax(0, 1fr);
+
+    gap: 16px;
+
+    align-items: end;
+}
+
+.game-card {
+    min-width: 0;
+
+    padding: 18px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    background: var(--card);
+
+    transition:
+        border-color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.game-card:focus-within {
+    border-color: var(--accent);
+
+    box-shadow:
+        0 0 0 3px rgba(124, 92, 255, .08);
+
+    transform: translateY(-1px);
+}
+
+.field-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: .9px;
+}
+
+select,
+input {
+    width: 100%;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 11px;
+
+    background: var(--input);
+    color: var(--text);
+
+    padding: 12px 13px;
+
+    outline: none;
+
+    transition:
+        border-color .2s,
+        box-shadow .2s;
+}
+
+select:hover,
+input:hover {
+    border-color: var(--border-hover);
+}
+
+select:focus,
+input:focus {
+    border-color: var(--accent);
+
+    box-shadow:
+        0 0 0 3px rgba(124, 92, 255, .11);
+}
+
+.swap-container {
+    display: flex;
+    justify-content: center;
+}
+
+.swap-button {
+    width: 48px;
+    height: 48px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 14px;
+
+    background: var(--card-2);
+    color: var(--text);
+
+    transition:
+        transform .3s ease,
+        border-color .2s,
+        color .2s;
+}
+
+.swap-button:hover {
+    transform: rotate(180deg);
+
+    border-color: var(--accent);
+    color: var(--accent-light);
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.input-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    gap: 16px;
+
+    margin-top: 16px;
+}
+
+.input-card {
+    padding: 18px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    background: var(--card);
+}
+
+.input-description {
+    margin-top: 7px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+.dpi-presets {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 7px;
+
+    margin-top: 10px;
+}
+
+.small-button {
+    padding: 6px 10px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 8px;
+
+    background: var(--card-2);
+
+    color: var(--muted);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    transition:
+        border-color .2s,
+        color .2s,
+        transform .2s;
+}
+
+.small-button:hover {
+    border-color: var(--accent);
+    color: var(--text);
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.error {
+    min-height: 19px;
+
+    margin-top: 7px;
+
+    color: var(--red);
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   ACTION BAR
+   ========================================================= */
+
+.action-bar {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 14px;
+
+    margin-top: 17px;
+
+    flex-wrap: wrap;
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+.remember input {
+    width: auto;
+    accent-color: var(--accent);
+}
+
+.actions {
+    display: flex;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+}
+
+.button {
+    border:
+        1px solid var(--border);
+
+    border-radius: 11px;
+
+    background: var(--card-2);
+    color: var(--text);
+
+    padding: 10px 15px;
+
+    font-weight: 750;
+
+    transition:
+        transform .2s,
+        border-color .2s,
+        box-shadow .2s;
+}
+
+.button:hover {
+    transform: translateY(-1px);
+    border-color: var(--border-hover);
+}
+
+.button-primary {
+    border-color: transparent;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--accent),
+            #6042ff
+        );
+
+    box-shadow:
+        0 9px 28px rgba(124, 92, 255, .2);
+}
+
+.button-primary:hover {
+    box-shadow:
+        0 13px 35px rgba(124, 92, 255, .3);
+}
+
+
+/* =========================================================
+   RESULTS
+   ========================================================= */
+
+.results {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 11px;
+
+    margin-top: 18px;
+}
+
+.result-card {
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 18px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 15px;
+
+    background: var(--card);
+
+    min-width: 0;
+}
+
+.result-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 110px;
+    height: 110px;
+
+    right: -55px;
+    top: -55px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(124, 92, 255, .14),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+.result-title {
+    color: var(--muted);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: .7px;
+}
+
+.result-number {
+    margin-top: 5px;
+
+    font-size: clamp(21px, 3vw, 27px);
+
+    font-weight: 850;
+
+    letter-spacing: -.7px;
+
+    word-break: break-word;
+}
+
+.result-unit {
+    color: var(--muted);
+
+    font-size: 11px;
+
+    margin-left: 3px;
+}
+
+.copy-result {
+    position: absolute;
+
+    right: 10px;
+    bottom: 9px;
+
+    border: 0;
+
+    background: transparent;
+
+    color: var(--muted);
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.copy-result:hover {
+    color: var(--accent-light);
+}
+
+
+/* =========================================================
+   CONVERSION SUMMARY
+   ========================================================= */
+
+.summary {
+    margin-top: 18px;
+
+    padding: 18px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(124, 92, 255, .06),
+            rgba(255, 255, 255, .01)
+        );
+}
+
+.summary-top {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 10px;
+}
+
+.summary-title {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.summary-status {
+    padding: 5px 9px;
+
+    border-radius: 7px;
+
+    background: rgba(69, 212, 131, .08);
+
+    color: var(--green);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.summary-text {
+    color: var(--text-soft);
+
+    font-size: 14px;
+}
+
+.summary-text strong {
+    color: var(--text);
+}
+
+
+/* =========================================================
+   VISUALIZER
+   ========================================================= */
+
+.visualizer {
+    margin-top: 18px;
+
+    padding: 20px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    background: var(--card);
+}
+
+.visualizer-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    margin-bottom: 15px;
+}
+
+.visualizer-title {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.visualizer-description {
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+.visualizer-value {
+    text-align: right;
+
+    color: var(--accent-light);
+
+    font-size: 13px;
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+.mouse-area {
+    position: relative;
+
+    height: 100px;
+
+    overflow: hidden;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(124, 92, 255, .025),
+            rgba(124, 92, 255, .075),
+            rgba(124, 92, 255, .025)
+        );
+}
+
+.center-line {
+    position: absolute;
+
+    top: 14px;
+    bottom: 14px;
+
+    left: 50%;
+
+    width: 1px;
+
+    transform: translateX(-50%);
+
+    background: rgba(255, 255, 255, .12);
+}
+
+.center-dot {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 9px;
+    height: 9px;
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background: var(--accent);
+
+    box-shadow:
+        0 0 20px rgba(124, 92, 255, .7);
+}
+
+.mouse-sweep {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    width: 45%;
+
+    height: 2px;
+
+    transform-origin: left center;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--accent-light),
+            transparent
+        );
+
+    animation:
+        sensitivitySweep 2.5s ease-in-out infinite;
+}
+
+@keyframes sensitivitySweep {
+
+    0% {
+        transform:
+            translateY(-50%)
+            rotate(-9deg);
+
+        opacity: .25;
+    }
+
+    50% {
+        transform:
+            translateY(-50%)
+            rotate(9deg);
+
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            translateY(-50%)
+            rotate(-9deg);
+
+        opacity: .25;
+    }
+}
+
+
+/* =========================================================
+   GAME INFO
+   ========================================================= */
+
+.game-info {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 11px;
+
+    margin-top: 12px;
+}
+
+.info-pill {
+    padding: 12px 14px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 12px;
+
+    background: var(--card);
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+.info-pill strong {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: var(--text);
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   EXPLANATION CARDS
+   ========================================================= */
+
+.info-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-top: 25px;
+}
+
+.info-card {
+    padding: 21px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    background: var(--card);
+}
+
+.info-card h2 {
+    margin-bottom: 8px;
+
+    font-size: 19px;
+
+    letter-spacing: -.4px;
+}
+
+.info-card p {
+    color: var(--muted);
+
+    font-size: 14px;
+}
+
+.info-card p + p {
+    margin-top: 9px;
+}
+
+
+/* =========================================================
+   FAQ
+   ========================================================= */
+
+.faq {
+    margin: 27px 0 45px;
+}
+
+.faq h2 {
+    margin-bottom: 12px;
+
+    font-size: 23px;
+
+    letter-spacing: -.6px;
+}
+
+details {
+    margin-bottom: 8px;
+
+    padding: 15px 17px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 13px;
+
+    background: var(--card);
+}
+
+summary {
+    cursor: pointer;
+
+    font-weight: 750;
+}
+
+details p {
+    margin-top: 9px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+.toast {
+    position: fixed;
+
+    left: 50%;
+    bottom: 25px;
+
+    z-index: 1000;
+
+    transform:
+        translate(-50%, 20px);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    padding: 11px 17px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 12px;
+
+    background: #141b27;
+
+    color: var(--text);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, .4);
+
+    transition:
+        opacity .25s,
+        transform .25s;
+}
+
+.toast.show {
+    opacity: 1;
+
+    transform:
+        translate(-50%, 0);
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+    padding-bottom: 35px;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 850px) {
+
+    .results {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .game-info {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+@media (max-width: 720px) {
+
+    .game-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .swap-container {
+        order: 3;
+    }
+
+    .swap-button {
+        transform: rotate(90deg);
+    }
+
+    .swap-button:hover {
+        transform: rotate(270deg);
+    }
+
+    .input-grid,
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .action-bar {
+        align-items: stretch;
+    }
+
+    .actions {
+        width: 100%;
+    }
+
+    .actions .button {
+        flex: 1;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .container {
+        width: min(100% - 16px, 1120px);
+    }
+
+    .header {
+        padding-top: 30px;
+    }
+
+    .converter {
+        padding: 13px;
+        border-radius: 19px;
+    }
+
+    h1 {
+        font-size: 35px;
+    }
+
+    .hero-description {
+        font-size: 14px;
+    }
+
+    .results {
+        grid-template-columns: 1fr;
+    }
+
+    .visualizer-header {
+        flex-direction: column;
+    }
+
+    .visualizer-value {
+        text-align: left;
+    }
+
+    .actions .button {
+        padding-left: 11px;
+        padding-right: 11px;
+        font-size: 12px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+
+}
+
+</style>
 </head>
+
 
 <body>
 
 <div class="container">
 
-    <h1>Ezqr's Sensitivity Converter</h1>
+<header class="header">
 
-    <p class="subtitle">
-        Match your mouse feel across games using the same physical cm/360°.
+    <div class="brand">
+        <div class="brand-icon">E</div>
+        <div class="brand-name">
+            Ezqr's Gaming Tools
+        </div>
+    </div>
+
+    <h1>
+        Sensitivity Converter
+    </h1>
+
+    <p class="hero-description">
+        Convert your mouse sensitivity between popular FPS games
+        while keeping your physical 360° movement consistent.
+        Calculate eDPI, cm/360° and inches/360° instantly.
     </p>
 
-    <div class="converter">
+</header>
 
-        <div class="section-title">
-            Games
+
+<main>
+
+<section class="converter">
+
+    <!-- GAME SELECTION -->
+
+    <div class="game-grid">
+
+        <div class="game-card">
+
+            <label
+                class="field-label"
+                for="fromGame"
+            >
+                Convert From
+            </label>
+
+            <select
+                id="fromGame"
+                aria-label="Game to convert from"
+            ></select>
+
         </div>
 
-        <div class="game-grid">
 
-            <div class="field">
-
-                <label for="fromGame">
-                    FROM
-                </label>
-
-                <select id="fromGame">
-
-                    <option value="cs2">
-                        Counter-Strike 2
-                    </option>
-
-                    <option value="valorant">
-                        Valorant
-                    </option>
-
-                    <option value="apex">
-                        Apex Legends
-                    </option>
-
-                    <option value="overwatch">
-                        Overwatch 2
-                    </option>
-
-                    <option value="cod">
-                        Call of Duty / Warzone
-                    </option>
-
-                    <option value="fortnite">
-                        Fortnite
-                    </option>
-
-                    <option value="rainbow6">
-                        Rainbow Six Siege
-                    </option>
-
-                    <option value="thefinals">
-                        THE FINALS
-                    </option>
-
-                    <option value="roblox">
-                        Roblox
-                    </option>
-
-                    <option value="minecraft">
-                        Minecraft Java Edition
-                    </option>
-
-                </select>
-
-            </div>
+        <div class="swap-container">
 
             <button
                 class="swap-button"
-                onclick="swapGames()"
-                title="Swap games">
+                id="swapButton"
+                aria-label="Swap games"
+                title="Swap games"
+            >
                 ⇄
             </button>
 
-            <div class="field">
-
-                <label for="toGame">
-                    TO
-                </label>
-
-                <select id="toGame">
-
-                    <option value="valorant">
-                        Valorant
-                    </option>
-
-                    <option value="cs2">
-                        Counter-Strike 2
-                    </option>
-
-                    <option value="apex">
-                        Apex Legends
-                    </option>
-
-                    <option value="overwatch">
-                        Overwatch 2
-                    </option>
-
-                    <option value="cod">
-                        Call of Duty / Warzone
-                    </option>
-
-                    <option value="fortnite">
-                        Fortnite
-                    </option>
-
-                    <option value="rainbow6">
-                        Rainbow Six Siege
-                    </option>
-
-                    <option value="thefinals">
-                        THE FINALS
-                    </option>
-
-                    <option value="roblox">
-                        Roblox
-                    </option>
-
-                    <option value="minecraft">
-                        Minecraft Java Edition
-                    </option>
-
-                </select>
-
-            </div>
-
         </div>
 
-        <div class="section-title">
-            Sensitivity
-        </div>
 
-        <div class="field">
+        <div class="game-card">
 
-            <label for="sensitivity">
-                Source Sensitivity
+            <label
+                class="field-label"
+                for="toGame"
+            >
+                Convert To
             </label>
 
-            <input
-                id="sensitivity"
-                type="number"
-                min="0"
-                step="any"
-                value="1"
-                placeholder="Enter sensitivity">
-
-            <div
-                id="minecraftNote"
-                class="minecraft-note"
-                style="display:none;">
-                Minecraft uses its internal 0.00–1.00 sensitivity value.
-                0.50 = 50% in-game.
-            </div>
-
-        </div>
-
-        <div class="dpi-row">
-
-            <div class="field">
-
-                <label for="sourceDpi">
-                    Source DPI
-                </label>
-
-                <input
-                    id="sourceDpi"
-                    type="number"
-                    min="1"
-                    step="1"
-                    value="800">
-
-            </div>
-
-            <div class="field">
-
-                <label for="targetDpi">
-                    Target DPI
-                </label>
-
-                <input
-                    id="targetDpi"
-                    type="number"
-                    min="1"
-                    step="1"
-                    value="800">
-
-            </div>
-
-        </div>
-
-        <button
-            class="convert-button"
-            onclick="convertSensitivity()">
-            CONVERT SENSITIVITY
-        </button>
-
-        <div
-            id="warning"
-            class="warning">
-        </div>
-
-        <div
-            id="result"
-            class="result">
-
-            <div class="result-label">
-                TARGET SENSITIVITY
-            </div>
-
-            <div id="resultSensitivity">
-                -
-            </div>
-
-            <button
-                class="copy-button"
-                onclick="copyResult()">
-                COPY SENSITIVITY
-            </button>
-
-            <div class="stats">
-
-                <div class="stat">
-
-                    <div class="stat-title">
-                        CM / 360°
-                    </div>
-
-                    <div
-                        class="stat-value"
-                        id="cm360">
-                        -
-                    </div>
-
-                </div>
-
-                <div class="stat">
-
-                    <div class="stat-title">
-                        IN / 360°
-                    </div>
-
-                    <div
-                        class="stat-value"
-                        id="in360">
-                        -
-                    </div>
-
-                </div>
-
-                <div class="stat">
-
-                    <div class="stat-title">
-                        TARGET eDPI
-                    </div>
-
-                    <div
-                        class="stat-value"
-                        id="targetEdpi">
-                        -
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="info">
-
-                <strong>How this works</strong><br><br>
-
-                The converter matches your physical mouse
-                movement by keeping your <strong>cm/360°</strong>
-                the same between games.
-
-                Different games use different sensitivity
-                scales, so the sensitivity number itself
-                cannot be compared directly.
-
-            </div>
+            <select
+                id="toGame"
+                aria-label="Game to convert to"
+            ></select>
 
         </div>
 
     </div>
 
+
+    <!-- INPUTS -->
+
+    <div class="input-grid">
+
+        <div class="input-card">
+
+            <label
+                class="field-label"
+                for="sensitivity"
+            >
+                In-Game Sensitivity
+            </label>
+
+            <input
+                id="sensitivity"
+                type="number"
+                min="0.000001"
+                max="1000000"
+                step="any"
+                value="2"
+                inputmode="decimal"
+                autocomplete="off"
+                aria-describedby="sensDescription"
+            >
+
+            <div
+                class="input-description"
+                id="sensDescription"
+            >
+                Enter the sensitivity you currently use.
+            </div>
+
+            <div
+                class="error"
+                id="sensitivityError"
+                aria-live="polite"
+            ></div>
+
+        </div>
+
+
+        <div class="input-card">
+
+            <label
+                class="field-label"
+                for="dpi"
+            >
+                Mouse DPI
+            </label>
+
+            <input
+                id="dpi"
+                type="number"
+                min="1"
+                max="100000"
+                step="1"
+                value="800"
+                inputmode="numeric"
+                autocomplete="off"
+                aria-describedby="dpiDescription"
+            >
+
+            <div
+                class="input-description"
+                id="dpiDescription"
+            >
+                Your physical mouse DPI.
+            </div>
+
+            <div class="dpi-presets">
+
+                <button
+                    class="small-button"
+                    data-dpi="400"
+                >
+                    400
+                </button>
+
+                <button
+                    class="small-button"
+                    data-dpi="800"
+                >
+                    800
+                </button>
+
+                <button
+                    class="small-button"
+                    data-dpi="1600"
+                >
+                    1600
+                </button>
+
+                <button
+                    class="small-button"
+                    data-dpi="3200"
+                >
+                    3200
+                </button>
+
+            </div>
+
+            <div
+                class="error"
+                id="dpiError"
+                aria-live="polite"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACTION BAR -->
+
+    <div class="action-bar">
+
+        <label class="remember">
+
+            <input
+                type="checkbox"
+                id="rememberSettings"
+            >
+
+            Remember my settings
+
+        </label>
+
+
+        <div class="actions">
+
+            <button
+                class="button"
+                id="resetButton"
+            >
+                Reset
+            </button>
+
+            <button
+                class="button"
+                id="copyAllButton"
+            >
+                Copy All
+            </button>
+
+            <button
+                class="button"
+                id="shareButton"
+            >
+                Share
+            </button>
+
+            <button
+                class="button button-primary"
+                id="convertButton"
+            >
+                Convert
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- RESULTS -->
+
+    <div class="results">
+
+        <div class="result-card">
+
+            <div class="result-title">
+                Converted Sensitivity
+            </div>
+
+            <div
+                class="result-number"
+                id="convertedSensitivity"
+            >
+                —
+            </div>
+
+            <button
+                class="copy-result"
+                data-copy="convertedSensitivity"
+            >
+                Copy
+            </button>
+
+        </div>
+
+
+        <div class="result-card">
+
+            <div class="result-title">
+                eDPI
+            </div>
+
+            <div
+                class="result-number"
+                id="effectiveDPI"
+            >
+                —
+            </div>
+
+            <button
+                class="copy-result"
+                data-copy="effectiveDPI"
+            >
+                Copy
+            </button>
+
+        </div>
+
+
+        <div class="result-card">
+
+            <div class="result-title">
+                cm / 360°
+            </div>
+
+            <div class="result-number">
+
+                <span id="cm360">
+                    —
+                </span>
+
+                <span class="result-unit">
+                    cm
+                </span>
+
+            </div>
+
+            <button
+                class="copy-result"
+                data-copy="cm360"
+            >
+                Copy
+            </button>
+
+        </div>
+
+
+        <div class="result-card">
+
+            <div class="result-title">
+                inches / 360°
+            </div>
+
+            <div class="result-number">
+
+                <span id="inch360">
+                    —
+                </span>
+
+                <span class="result-unit">
+                    in
+                </span>
+
+            </div>
+
+            <button
+                class="copy-result"
+                data-copy="inch360"
+            >
+                Copy
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary">
+
+        <div class="summary-top">
+
+            <div class="summary-title">
+                Conversion Summary
+            </div>
+
+            <div class="summary-status">
+                Same 360°
+            </div>
+
+        </div>
+
+        <div
+            class="summary-text"
+            id="summaryText"
+        >
+            Enter your sensitivity to see the conversion.
+
+        </div>
+
+    </div>
+
+
+    <!-- VISUALIZER -->
+
+    <div class="visualizer">
+
+        <div class="visualizer-header">
+
+            <div>
+
+                <div class="visualizer-title">
+                    Physical Mouse Movement
+                </div>
+
+                <div class="visualizer-description">
+                    Approximate mouse distance required for one
+                    complete 360° rotation.
+                </div>
+
+            </div>
+
+            <div
+                class="visualizer-value"
+                id="visualizerValue"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div
+            class="mouse-area"
+            aria-hidden="true"
+        >
+
+            <div class="center-line"></div>
+
+            <div class="center-dot"></div>
+
+            <div class="mouse-sweep"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- GAME DETAILS -->
+
+    <div class="game-info">
+
+        <div class="info-pill">
+
+            <strong>
+                Source Input Scale
+            </strong>
+
+            <span id="sourceYaw">
+                —
+            </span>
+
+        </div>
+
+
+        <div class="info-pill">
+
+            <strong>
+                Target Input Scale
+            </strong>
+
+            <span id="targetYaw">
+                —
+            </span>
+
+        </div>
+
+
+        <div class="info-pill">
+
+            <strong>
+                Physical Distance
+            </strong>
+
+            <span id="physicalDistance">
+                —
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- INFORMATION -->
+
+<section class="info-grid">
+
+    <article class="info-card">
+
+        <h2>
+            What is eDPI?
+        </h2>
+
+        <p>
+            eDPI, or effective DPI, is your mouse DPI multiplied
+            by your in-game sensitivity.
+        </p>
+
+        <p>
+            It is useful for comparing sensitivity settings
+            within the same game.
+        </p>
+
+    </article>
+
+
+    <article class="info-card">
+
+        <h2>
+            What is cm/360°?
+        </h2>
+
+        <p>
+            cm/360° represents the approximate physical mouse
+            distance required to rotate your character 360 degrees.
+        </p>
+
+        <p>
+            It is especially useful when comparing sensitivity
+            across different games.
+        </p>
+
+    </article>
+
+
+    <article class="info-card">
+
+        <h2>
+            How does conversion work?
+        </h2>
+
+        <p>
+            The converter compares the mouse-input rotation
+            scale of the two games and calculates the target
+            sensitivity required to maintain the same physical
+            360° movement.
+        </p>
+
+    </article>
+
+
+    <article class="info-card">
+
+        <h2>
+            Is the converted sensitivity guaranteed to feel identical?
+        </h2>
+
+        <p>
+            No. A mathematically equivalent 360° distance does not
+            guarantee identical aiming feel.
+        </p>
+
+        <p>
+            FOV, weapon mechanics, ADS systems, acceleration,
+            animation and other game-specific mechanics can affect
+            how sensitivity feels.
+        </p>
+
+    </article>
+
+</section>
+
+
+<!-- FAQ -->
+
+<section class="faq">
+
+    <h2>
+        Sensitivity Converter FAQ
+    </h2>
+
+
+    <details>
+
+        <summary>
+            What DPI should I use?
+        </summary>
+
+        <p>
+            There is no universally correct DPI. 400, 800 and
+            1600 are common choices, but your overall sensitivity
+            is what determines your physical mouse movement.
+        </p>
+
+    </details>
+
+
+    <details>
+
+        <summary>
+            Does FOV affect cm/360°?
+        </summary>
+
+        <p>
+            No. FOV changes how much of the game world you can see,
+            but it does not change the physical mouse movement
+            required for a 360° camera rotation.
+        </p>
+
+    </details>
+
+
+    <details>
+
+        <summary>
+            Why is my converted sensitivity different from another calculator?
+        </summary>
+
+        <p>
+            Different calculators can use different game input
+            constants, conversion methods or assumptions. The exact
+            implementation used by a particular game also matters.
+        </p>
+
+    </details>
+
+
+    <details>
+
+        <summary>
+            Does this convert ADS sensitivity?
+        </summary>
+
+        <p>
+            The primary conversion is for general mouse rotational
+            sensitivity. ADS and scoped sensitivities can use
+            game-specific multipliers and should be treated separately.
+        </p>
+
+    </details>
+
+
+    <details>
+
+        <summary>
+            Does higher cm/360° mean slower sensitivity?
+        </summary>
+
+        <p>
+            Yes. A larger cm/360° value means you need to move your
+            mouse farther to complete a 360° turn.
+        </p>
+
+    </details>
+
+
+    <details>
+
+        <summary>
+            Can I share my conversion?
+        </summary>
+
+        <p>
+            Yes. The Share button creates a URL containing your
+            selected games, sensitivity and DPI. Someone opening
+            that URL can see the same conversion settings.
+        </p>
+
+    </details>
+
+
+    <details>
+
+        <summary>
+            Can I use this on my phone?
+        </summary>
+
+        <p>
+            Yes. The converter is fully responsive and works on
+            desktop, tablet and mobile screens.
+        </p>
+
+    </details>
+
+</section>
+
+</main>
+
+
+<footer>
+    Ezqr's Gaming Tools • Sensitivity Converter
+</footer>
+
 </div>
+
+
+<div
+    class="toast"
+    id="toast"
+    role="status"
+    aria-live="polite"
+>
+    Copied to clipboard
+</div>
+
 
 <script>
 
+/* =========================================================
+   GAME DATABASE
+
+   yaw = approximate degrees of camera rotation per mouse count.
+
+   The converter is intended for general / hipfire sensitivity.
+   ADS and scoped multipliers vary by game.
+   ========================================================= */
+
+const GAMES = {
+
+    "Counter-Strike 2": {
+        yaw: 0.022,
+        category: "FPS"
+    },
+
+    "Counter-Strike: GO": {
+        yaw: 0.022,
+        category: "FPS"
+    },
+
+    "Valorant": {
+        yaw: 0.07,
+        category: "FPS"
+    },
+
+    "Apex Legends": {
+        yaw: 0.022,
+        category: "FPS"
+    },
+
+    "Overwatch 2": {
+        yaw: 0.0066,
+        category: "FPS"
+    },
+
+    "Rainbow Six Siege": {
+        yaw: 0.00223,
+        category: "FPS"
+    },
+
+    "Call of Duty": {
+        yaw: 0.0066,
+        category: "FPS"
+    },
+
+    "Call of Duty: Warzone": {
+        yaw: 0.0066,
+        category: "FPS"
+    },
+
+    "Fortnite": {
+        yaw: 0.0055555556,
+        category: "FPS"
+    },
+
+    "PUBG": {
+        yaw: 0.022,
+        category: "FPS"
+    },
+
+    "Team Fortress 2": {
+        yaw: 0.022,
+        category: "FPS"
+    },
+
+    "Quake": {
+        yaw: 0.022,
+        category: "FPS"
+    },
+
+    "Paladins": {
+        yaw: 0.0066,
+        category: "FPS"
+    },
+
+    "The Finals": {
+        yaw: 0.0066,
+        category: "FPS"
+    },
+
+    "Destiny 2": {
+        yaw: 0.0066,
+        category: "FPS"
+    }
+
+};
+
+
+/* =========================================================
+   DOM
+   ========================================================= */
+
+const fromGame =
+    document.getElementById("fromGame");
+
+const toGame =
+    document.getElementById("toGame");
+
+const sensitivity =
+    document.getElementById("sensitivity");
+
+const dpi =
+    document.getElementById("dpi");
+
+const convertedSensitivity =
+    document.getElementById("convertedSensitivity");
+
+const effectiveDPI =
+    document.getElementById("effectiveDPI");
+
+const cm360 =
+    document.getElementById("cm360");
+
+const inch360 =
+    document.getElementById("inch360");
+
+const sensitivityError =
+    document.getElementById("sensitivityError");
+
+const dpiError =
+    document.getElementById("dpiError");
+
+const summaryText =
+    document.getElementById("summaryText");
+
+const visualizerValue =
+    document.getElementById("visualizerValue");
+
+const sourceYaw =
+    document.getElementById("sourceYaw");
+
+const targetYaw =
+    document.getElementById("targetYaw");
+
+const physicalDistance =
+    document.getElementById("physicalDistance");
+
+const rememberSettings =
+    document.getElementById("rememberSettings");
+
+const toast =
+    document.getElementById("toast");
+
+
+/* =========================================================
+   GAME SELECTORS
+   ========================================================= */
+
+function populateGames() {
+
+    const names =
+        Object.keys(GAMES);
+
+    names.forEach(name => {
+
+        const optionFrom =
+            document.createElement("option");
+
+        optionFrom.value = name;
+        optionFrom.textContent = name;
+
+        fromGame.appendChild(optionFrom);
+
+
+        const optionTo =
+            document.createElement("option");
+
+        optionTo.value = name;
+        optionTo.textContent = name;
+
+        toGame.appendChild(optionTo);
+
+    });
+
+    fromGame.value =
+        "Counter-Strike 2";
+
+    toGame.value =
+        "Valorant";
+
+}
+
+populateGames();
+
+
+/* =========================================================
+   NUMBER FORMAT
+   ========================================================= */
+
+function formatNumber(
+    value,
+    decimals = 3
+) {
+
+    if (!Number.isFinite(value)) {
+        return "—";
+    }
+
+    return value.toLocaleString(
+        "en-US",
+        {
+            maximumFractionDigits:
+                decimals,
+
+            minimumFractionDigits:
+                0
+        }
+    );
+
+}
+
+
+/* =========================================================
+   VALIDATION
+   ========================================================= */
+
+function validateInputs() {
+
+    const sens =
+        Number(sensitivity.value);
+
+    const mouseDpi =
+        Number(dpi.value);
+
+
+    sensitivityError.textContent = "";
+    dpiError.textContent = "";
+
+
+    let valid = true;
+
+
+    if (
+        !Number.isFinite(sens) ||
+        sens <= 0
+    ) {
+
+        sensitivityError.textContent =
+            "Enter a sensitivity greater than 0.";
+
+        valid = false;
+
+    }
+
+
+    if (sens > 1000000) {
+
+        sensitivityError.textContent =
+            "That sensitivity is too large.";
+
+        valid = false;
+
+    }
+
+
+    if (
+        !Number.isFinite(mouseDpi) ||
+        mouseDpi <= 0
+    ) {
+
+        dpiError.textContent =
+            "Enter a DPI greater than 0.";
+
+        valid = false;
+
+    }
+
+
+    if (mouseDpi > 100000) {
+
+        dpiError.textContent =
+            "That DPI is too large.";
+
+        valid = false;
+
+    }
+
+
+    return valid;
+
+}
+
+
+/* =========================================================
+   CONVERSION
+   ========================================================= */
+
+function convert() {
+
+    if (!validateInputs()) {
+
+        clearResults();
+
+        return;
+
+    }
+
+
+    const source =
+        GAMES[fromGame.value];
+
+    const target =
+        GAMES[toGame.value];
+
+
+    if (!source || !target) {
+        return;
+    }
+
+
+    const sens =
+        Number(sensitivity.value);
+
+    const mouseDpi =
+        Number(dpi.value);
+
+
     /*
-    ============================================================
-    EZQR'S SENSITIVITY CONVERTER
-    ============================================================
+        The same physical 360° rotation requires:
 
-    Standard FPS games:
+        source sensitivity × source yaw
+        =
+        target sensitivity × target yaw
 
-        degreesPerCount =
-            sensitivity × yaw
+        Therefore:
 
-        cm360 =
-            (360 × 2.54) /
-            (DPI × degreesPerCount)
-
-    Therefore:
-
-        targetSens =
-            sourceSens ×
-            sourceYaw × sourceDPI /
-            (targetYaw × targetDPI)
-
-    Minecraft Java is different.
-
-    Minecraft's camera multiplier is:
-
-        (0.6 × sensitivity + 0.2)^3 × 1.2
-
-    This is used directly as the degrees-per-mouse-count
-    multiplier.
-
-    To convert INTO Minecraft, the formula is inverted.
-
-    ============================================================
+        target sensitivity =
+        source sensitivity × source yaw / target yaw
     */
 
+    const targetSensitivity =
+        sens *
+        source.yaw /
+        target.yaw;
 
-    const games = {
 
-        cs2: {
-            name: "Counter-Strike 2",
-            type: "yaw",
-            yaw: 0.022
-        },
+    /*
+        Effective DPI
+    */
 
-        valorant: {
-            name: "Valorant",
-            type: "yaw",
-            yaw: 0.07
-        },
+    const edpi =
+        mouseDpi *
+        sens;
 
-        apex: {
-            name: "Apex Legends",
-            type: "yaw",
-            yaw: 0.022
-        },
 
-        overwatch: {
-            name: "Overwatch 2",
-            type: "yaw",
-            yaw: 0.0066
-        },
+    /*
+        Mouse distance for 360°.
 
-        cod: {
-            name: "Call of Duty / Warzone",
-            type: "yaw",
-            yaw: 0.0066
-        },
+        Mouse counts required:
 
-        /*
-        Fortnite's standard X/Y sensitivity scale
-        uses approximately 0.005555 degrees/count.
-        */
+        360 / (sensitivity × yaw)
 
-        fortnite: {
-            name: "Fortnite",
-            type: "yaw",
-            yaw: 0.005555
-        },
+        Convert counts to inches:
 
-        /*
-        Rainbow Six Siege hip-fire.
-        Scoped sensitivities are separate.
-        */
+        counts / DPI
 
-        rainbow6: {
-            name: "Rainbow Six Siege",
-            type: "yaw",
-            yaw: 0.00572958
-        },
+        Convert inches to cm:
 
-        thefinals: {
-            name: "THE FINALS",
-            type: "yaw",
-            yaw: 0.0066
-        },
+        inches × 2.54
+    */
 
-        /*
-        Roblox does not have one universal sensitivity
-        setting across every Roblox experience.
+    const inches =
+        360 /
+        (
+            mouseDpi *
+            sens *
+            source.yaw
+        );
 
-        This value represents the commonly used Roblox
-        mouse-yaw model. Individual Roblox games can
-        implement their own sensitivity systems.
-        */
 
-        roblox: {
-            name: "Roblox",
-            type: "yaw",
-            yaw: 0.39783
-        },
+    const centimeters =
+        inches * 2.54;
 
-        /*
-        Minecraft Java Edition uses a nonlinear
-        sensitivity formula rather than a fixed yaw.
-        */
 
-        minecraft: {
-            name: "Minecraft Java Edition",
-            type: "minecraft"
+    /*
+        Display results.
+    */
+
+    convertedSensitivity.textContent =
+        formatNumber(
+            targetSensitivity,
+            4
+        );
+
+    effectiveDPI.textContent =
+        formatNumber(
+            edpi,
+            0
+        );
+
+    cm360.textContent =
+        formatNumber(
+            centimeters,
+            2
+        );
+
+    inch360.textContent =
+        formatNumber(
+            inches,
+            2
+        );
+
+
+    sourceYaw.textContent =
+        source.yaw;
+
+    targetYaw.textContent =
+        target.yaw;
+
+    physicalDistance.textContent =
+        `${formatNumber(centimeters, 2)} cm / 360°`;
+
+
+    visualizerValue.textContent =
+        `${formatNumber(centimeters, 2)} cm / 360°`;
+
+
+    summaryText.innerHTML = `
+        <strong>${escapeHTML(fromGame.value)}</strong>
+        at
+        <strong>${formatNumber(sens, 4)}</strong>
+        sensitivity and
+        <strong>${formatNumber(mouseDpi, 0)} DPI</strong>
+        converts to approximately
+        <strong>${formatNumber(targetSensitivity, 4)}</strong>
+        in
+        <strong>${escapeHTML(toGame.value)}</strong>.
+        Both settings target approximately
+        <strong>${formatNumber(centimeters, 2)} cm/360°</strong>.
+    `;
+
+
+    saveSettings();
+
+}
+
+
+/* =========================================================
+   CLEAR
+   ========================================================= */
+
+function clearResults() {
+
+    convertedSensitivity.textContent = "—";
+    effectiveDPI.textContent = "—";
+    cm360.textContent = "—";
+    inch360.textContent = "—";
+
+    sourceYaw.textContent = "—";
+    targetYaw.textContent = "—";
+    physicalDistance.textContent = "—";
+    visualizerValue.textContent = "—";
+
+    summaryText.textContent =
+        "Enter valid sensitivity and DPI values to see the conversion.";
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+   ========================================================= */
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/* =========================================================
+   COPY
+   ========================================================= */
+
+async function copyText(text) {
+
+    if (!text) {
+        return false;
+    }
+
+
+    try {
+
+        await navigator.clipboard.writeText(
+            text
+        );
+
+        return true;
+
+    } catch {
+
+        const textarea =
+            document.createElement("textarea");
+
+        textarea.value = text;
+
+        textarea.style.position =
+            "fixed";
+
+        textarea.style.opacity =
+            "0";
+
+        document.body.appendChild(
+            textarea
+        );
+
+        textarea.focus();
+        textarea.select();
+
+        let success = false;
+
+        try {
+
+            success =
+                document.execCommand(
+                    "copy"
+                );
+
+        } catch {
+
+            success = false;
+
         }
+
+        textarea.remove();
+
+        return success;
+
+    }
+
+}
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+let toastTimer;
+
+function showToast(message) {
+
+    toast.textContent =
+        message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer =
+        setTimeout(() => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        }, 1900);
+
+}
+
+
+/* =========================================================
+   COPY RESULT BUTTONS
+   ========================================================= */
+
+document
+    .querySelectorAll(".copy-result")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            async () => {
+
+                const element =
+                    document.getElementById(
+                        button.dataset.copy
+                    );
+
+                if (!element) {
+                    return;
+                }
+
+                const value =
+                    element.textContent.trim();
+
+                if (
+                    !value ||
+                    value === "—"
+                ) {
+
+                    showToast(
+                        "Nothing to copy yet"
+                    );
+
+                    return;
+
+                }
+
+                const success =
+                    await copyText(value);
+
+                showToast(
+                    success
+                        ? "Copied to clipboard"
+                        : "Copy failed"
+                );
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   COPY EVERYTHING
+   ========================================================= */
+
+document
+    .getElementById("copyAllButton")
+    .addEventListener(
+        "click",
+        async () => {
+
+            if (
+                convertedSensitivity.textContent
+                === "—"
+            ) {
+
+                showToast(
+                    "Convert a sensitivity first"
+                );
+
+                return;
+
+            }
+
+
+            const text =
+
+`Ezqr's Gaming Tools - Sensitivity Conversion
+
+From:
+${fromGame.value}
+
+Sensitivity:
+${sensitivity.value}
+
+DPI:
+${dpi.value}
+
+To:
+${toGame.value}
+
+Converted Sensitivity:
+${convertedSensitivity.textContent}
+
+eDPI:
+${effectiveDPI.textContent}
+
+cm/360°:
+${cm360.textContent} cm
+
+inches/360°:
+${inch360.textContent} in`;
+
+
+            const success =
+                await copyText(text);
+
+            showToast(
+                success
+                    ? "Conversion copied"
+                    : "Copy failed"
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   SWAP
+   ========================================================= */
+
+document
+    .getElementById("swapButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            const oldFrom =
+                fromGame.value;
+
+            fromGame.value =
+                toGame.value;
+
+            toGame.value =
+                oldFrom;
+
+
+            /*
+                The numerical sensitivity remains
+                the source sensitivity.
+
+                Recalculate using the new source game.
+            */
+
+            convert();
+
+        }
+    );
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+document
+    .getElementById("resetButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            fromGame.value =
+                "Counter-Strike 2";
+
+            toGame.value =
+                "Valorant";
+
+            sensitivity.value =
+                "2";
+
+            dpi.value =
+                "800";
+
+
+            sensitivityError.textContent =
+                "";
+
+            dpiError.textContent =
+                "";
+
+
+            rememberSettings.checked =
+                false;
+
+
+            localStorage.removeItem(
+                "ezqrSensitivitySettings"
+            );
+
+
+            clearResults();
+
+            convert();
+
+            showToast(
+                "Settings reset"
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   DPI PRESETS
+   ========================================================= */
+
+document
+    .querySelectorAll("[data-dpi]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                dpi.value =
+                    button.dataset.dpi;
+
+                convert();
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   LIVE CONVERSION
+   ========================================================= */
+
+[
+    fromGame,
+    toGame,
+    sensitivity,
+    dpi
+].forEach(element => {
+
+    element.addEventListener(
+        "input",
+        convert
+    );
+
+    element.addEventListener(
+        "change",
+        convert
+    );
+
+});
+
+
+/* =========================================================
+   LOCAL STORAGE
+   ========================================================= */
+
+function saveSettings() {
+
+    if (!rememberSettings.checked) {
+        return;
+    }
+
+
+    const settings = {
+
+        from:
+            fromGame.value,
+
+        to:
+            toGame.value,
+
+        sensitivity:
+            sensitivity.value,
+
+        dpi:
+            dpi.value
 
     };
 
 
-    /*
-    ============================================================
-    MINECRAFT EFFECTIVE YAW
-    ============================================================
-    */
+    localStorage.setItem(
+        "ezqrSensitivitySettings",
+        JSON.stringify(settings)
+    );
 
-    function minecraftYaw(sensitivity) {
+}
 
-        const f =
-            sensitivity * 0.6 + 0.2;
 
-        return (
-            f *
-            f *
-            f *
-            1.2
+function loadSettings() {
+
+    const saved =
+        localStorage.getItem(
+            "ezqrSensitivitySettings"
+        );
+
+    if (!saved) {
+        return;
+    }
+
+
+    try {
+
+        const settings =
+            JSON.parse(saved);
+
+
+        if (
+            settings.from &&
+            GAMES[settings.from]
+        ) {
+
+            fromGame.value =
+                settings.from;
+
+        }
+
+
+        if (
+            settings.to &&
+            GAMES[settings.to]
+        ) {
+
+            toGame.value =
+                settings.to;
+
+        }
+
+
+        if (
+            settings.sensitivity &&
+            Number(settings.sensitivity) > 0
+        ) {
+
+            sensitivity.value =
+                settings.sensitivity;
+
+        }
+
+
+        if (
+            settings.dpi &&
+            Number(settings.dpi) > 0
+        ) {
+
+            dpi.value =
+                settings.dpi;
+
+        }
+
+
+        rememberSettings.checked =
+            true;
+
+
+    } catch {
+
+        localStorage.removeItem(
+            "ezqrSensitivitySettings"
         );
 
     }
 
+}
 
-    /*
-    ============================================================
-    CONVERT MINECRAFT YAW BACK INTO SENSITIVITY
-    ============================================================
-    */
 
-    function minecraftSensitivityFromYaw(yaw) {
+rememberSettings
+    .addEventListener(
+        "change",
+        () => {
 
-        if (yaw <= 0) {
+            if (
+                rememberSettings.checked
+            ) {
 
-            return 0;
+                saveSettings();
 
-        }
+            } else {
 
-        const cubeRoot =
-            Math.cbrt(
-                yaw / 1.2
-            );
-
-        const sensitivity =
-            (
-                cubeRoot - 0.2
-            ) / 0.6;
-
-        return sensitivity;
-
-    }
-
-
-    /*
-    ============================================================
-    GET EFFECTIVE YAW
-    ============================================================
-    */
-
-    function getEffectiveYaw(game, sensitivity) {
-
-        if (
-            game.type === "minecraft"
-        ) {
-
-            return minecraftYaw(
-                sensitivity
-            );
-
-        }
-
-        return game.yaw;
-
-    }
-
-
-    /*
-    ============================================================
-    CONVERT
-    ============================================================
-    */
-
-    function convertSensitivity() {
-
-        const fromKey =
-            document.getElementById(
-                "fromGame"
-            ).value;
-
-        const toKey =
-            document.getElementById(
-                "toGame"
-            ).value;
-
-        const sourceSensitivity =
-            Number(
-                document.getElementById(
-                    "sensitivity"
-                ).value
-            );
-
-        const sourceDpi =
-            Number(
-                document.getElementById(
-                    "sourceDpi"
-                ).value
-            );
-
-        const targetDpi =
-            Number(
-                document.getElementById(
-                    "targetDpi"
-                ).value
-            );
-
-
-        if (
-            !Number.isFinite(
-                sourceSensitivity
-            ) ||
-            sourceSensitivity <= 0
-        ) {
-
-            alert(
-                "Enter a valid sensitivity."
-            );
-
-            return;
-
-        }
-
-
-        if (
-            !Number.isFinite(sourceDpi) ||
-            sourceDpi <= 0
-        ) {
-
-            alert(
-                "Enter a valid source DPI."
-            );
-
-            return;
-
-        }
-
-
-        if (
-            !Number.isFinite(targetDpi) ||
-            targetDpi <= 0
-        ) {
-
-            alert(
-                "Enter a valid target DPI."
-            );
-
-            return;
-
-        }
-
-
-        const sourceGame =
-            games[fromKey];
-
-        const targetGame =
-            games[toKey];
-
-
-        /*
-        Minecraft Java sensitivity ranges
-        from 0 to 1 internally.
-        */
-
-        if (
-            fromKey === "minecraft" &&
-            sourceSensitivity > 1
-        ) {
-
-            alert(
-                "Minecraft sensitivity must be between 0 and 1. Example: 0.5 = 50%."
-            );
-
-            return;
-
-        }
-
-
-        /*
-        Minecraft cannot use exactly zero because
-        the effective rotation would be very small,
-        but the normal Minecraft minimum is supported.
-        */
-
-
-        const sourceYaw =
-            getEffectiveYaw(
-                sourceGame,
-                sourceSensitivity
-            );
-
-
-        /*
-        Physical mouse distance for 360 degrees.
-        */
-
-        const cm360 =
-            (
-                360 * 2.54
-            ) /
-            (
-                sourceDpi *
-                sourceYaw
-            );
-
-
-        /*
-        Required target effective yaw to preserve
-        exactly the same physical cm/360.
-        */
-
-        const targetYaw =
-            (
-                360 * 2.54
-            ) /
-            (
-                targetDpi *
-                cm360
-            );
-
-
-        let targetSensitivity;
-
-
-        /*
-        Convert into Minecraft.
-        */
-
-        if (
-            targetGame.type === "minecraft"
-        ) {
-
-            targetSensitivity =
-                minecraftSensitivityFromYaw(
-                    targetYaw
+                localStorage.removeItem(
+                    "ezqrSensitivitySettings"
                 );
-
-            /*
-            Minecraft's practical slider range
-            is 0.00 to 1.00 internally.
-            */
-
-            if (
-                targetSensitivity < 0
-            ) {
-
-                targetSensitivity = 0;
-
-            }
-
-            if (
-                targetSensitivity > 1
-            ) {
-
-                targetSensitivity = 1;
 
             }
 
         }
+    );
 
-        /*
-        Convert into a normal yaw-based game.
-        */
 
-        else {
+/* =========================================================
+   SHAREABLE URL
+   ========================================================= */
 
-            targetSensitivity =
-                targetYaw /
-                targetGame.yaw;
+function createShareURL() {
+
+    const params =
+        new URLSearchParams();
+
+
+    params.set(
+        "from",
+        fromGame.value
+    );
+
+    params.set(
+        "to",
+        toGame.value
+    );
+
+    params.set(
+        "sens",
+        sensitivity.value
+    );
+
+    params.set(
+        "dpi",
+        dpi.value
+    );
+
+
+    return (
+        window.location.origin +
+        window.location.pathname +
+        "?" +
+        params.toString()
+    );
+
+}
+
+
+document
+    .getElementById("shareButton")
+    .addEventListener(
+        "click",
+        async () => {
+
+            const url =
+                createShareURL();
+
+
+            try {
+
+                if (
+                    navigator.share
+                ) {
+
+                    await navigator.share({
+
+                        title:
+                            "Ezqr's Gaming Tools - Sensitivity Converter",
+
+                        text:
+                            "Check out this sensitivity conversion.",
+
+                        url:
+                            url
+
+                    });
+
+                } else {
+
+                    const success =
+                        await copyText(url);
+
+                    showToast(
+                        success
+                            ? "Share link copied"
+                            : "Copy failed"
+                    );
+
+                }
+
+            } catch {
+
+                /*
+                    User cancelled the native
+                    share dialog.
+                */
+
+            }
 
         }
+    );
 
 
-        /*
-        Prevent displaying a negative or invalid result.
-        */
+/* =========================================================
+   URL LOADING
+   ========================================================= */
 
-        if (
-            !Number.isFinite(
-                targetSensitivity
-            ) ||
-            targetSensitivity < 0
-        ) {
+function loadFromURL() {
 
-            alert(
-                "This conversion is outside the supported sensitivity range."
-            );
-
-            return;
-
-        }
-
-
-        const targetEdpi =
-            targetSensitivity *
-            targetDpi;
-
-
-        const inches360 =
-            cm360 / 2.54;
-
-
-        /*
-        Display Minecraft as a percentage too.
-        */
-
-        let displaySensitivity;
-
-
-        if (
-            toKey === "minecraft"
-        ) {
-
-            displaySensitivity =
-                targetSensitivity.toFixed(4) +
-                " (" +
-                (
-                    targetSensitivity * 100
-                ).toFixed(2) +
-                "%)";
-
-        }
-
-        else {
-
-            displaySensitivity =
-                formatSensitivity(
-                    targetSensitivity
-                );
-
-        }
-
-
-        document.getElementById(
-            "resultSensitivity"
-        ).textContent =
-            displaySensitivity;
-
-
-        document.getElementById(
-            "cm360"
-        ).textContent =
-            cm360.toFixed(2) +
-            " cm";
-
-
-        document.getElementById(
-            "in360"
-        ).textContent =
-            inches360.toFixed(2) +
-            " in";
-
-
-        document.getElementById(
-            "targetEdpi"
-        ).textContent =
-            targetEdpi.toFixed(2);
-
-
-        document.getElementById(
-            "result"
-        ).style.display =
-            "block";
-
-
-        updateWarning(
-            fromKey,
-            toKey
+    const params =
+        new URLSearchParams(
+            window.location.search
         );
 
-    }
+
+    const from =
+        params.get("from");
+
+    const to =
+        params.get("to");
+
+    const sens =
+        params.get("sens");
+
+    const mouseDPI =
+        params.get("dpi");
 
 
-    /*
-    ============================================================
-    FORMAT SENSITIVITY
-    ============================================================
-    */
-
-    function formatSensitivity(value) {
-
-        if (
-            value >= 100
-        ) {
-
-            return value.toFixed(2);
-
-        }
-
-        if (
-            value >= 10
-        ) {
-
-            return value.toFixed(3);
-
-        }
-
-        if (
-            value >= 1
-        ) {
-
-            return value.toFixed(4);
-
-        }
-
-        if (
-            value >= 0.1
-        ) {
-
-            return value.toFixed(5);
-
-        }
-
-        return value.toFixed(6);
-
-    }
-
-
-    /*
-    ============================================================
-    WARNINGS
-    ============================================================
-    */
-
-    function updateWarning(
-        fromKey,
-        toKey
+    if (
+        from &&
+        GAMES[from]
     ) {
 
-        const warning =
-            document.getElementById(
-                "warning"
-            );
-
-        let message = "";
-
-
-        if (
-            fromKey === "roblox" ||
-            toKey === "roblox"
-        ) {
-
-            message =
-                "Roblox does not have one universal sensitivity system across every experience. This conversion uses the commonly referenced Roblox yaw model. A specific Roblox game may use a different sensitivity implementation.";
-
-        }
-
-
-        if (
-            fromKey === "minecraft" ||
-            toKey === "minecraft"
-        ) {
-
-            if (message) {
-
-                message += "<br><br>";
-
-            }
-
-            message +=
-                "Minecraft Java uses a nonlinear sensitivity curve, so this converter mathematically matches the effective mouse rotation rather than simply multiplying the displayed sensitivity number.";
-
-        }
-
-
-        if (
-            fromKey === "rainbow6" ||
-            toKey === "rainbow6"
-        ) {
-
-            if (message) {
-
-                message += "<br><br>";
-
-            }
-
-            message +=
-                "Rainbow Six Siege conversion is for hip-fire sensitivity. ADS and scope sensitivities use separate multipliers.";
-
-        }
-
-
-        if (
-            fromKey === "fortnite" ||
-            toKey === "fortnite"
-        ) {
-
-            if (message) {
-
-                message += "<br><br>";
-
-            }
-
-            message +=
-                "Fortnite conversion matches the standard X/Y sensitivity scale. ADS, targeting and scoped sensitivities are not included.";
-
-        }
-
-
-        if (message) {
-
-            warning.innerHTML =
-                message;
-
-            warning.style.display =
-                "block";
-
-        }
-
-        else {
-
-            warning.style.display =
-                "none";
-
-        }
+        fromGame.value =
+            from;
 
     }
 
 
-    /*
-    ============================================================
-    SWAP
-    ============================================================
-    */
+    if (
+        to &&
+        GAMES[to]
+    ) {
 
-    function swapGames() {
+        toGame.value =
+            to;
 
-        const from =
-            document.getElementById(
-                "fromGame"
-            );
-
-        const to =
-            document.getElementById(
-                "toGame"
-            );
+    }
 
 
-        const oldFrom =
-            from.value;
+    if (
+        sens &&
+        Number(sens) > 0
+    ) {
 
-        from.value =
-            to.value;
+        sensitivity.value =
+            sens;
 
-        to.value =
-            oldFrom;
+    }
 
 
-        updateMinecraftNote();
+    if (
+        mouseDPI &&
+        Number(mouseDPI) > 0
+    ) {
 
+        dpi.value =
+            mouseDPI;
+
+    }
+
+}
+
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
 
         /*
-        If a result already exists,
-        immediately recalculate it.
+            Ctrl/Cmd + Enter
+            = Convert
         */
 
         if (
-            document.getElementById(
-                "result"
-            ).style.display === "block"
+            (event.ctrlKey ||
+             event.metaKey) &&
+            event.key === "Enter"
         ) {
 
-            convertSensitivity();
+            event.preventDefault();
+
+            convert();
 
         }
-
-    }
-
-
-    /*
-    ============================================================
-    MINECRAFT UI NOTE
-    ============================================================
-    */
-
-    function updateMinecraftNote() {
-
-        const from =
-            document.getElementById(
-                "fromGame"
-            ).value;
-
-        const note =
-            document.getElementById(
-                "minecraftNote"
-            );
-
-
-        if (
-            from === "minecraft"
-        ) {
-
-            note.style.display =
-                "block";
-
-        }
-
-        else {
-
-            note.style.display =
-                "none";
-
-        }
-
-    }
-
-
-    /*
-    ============================================================
-    COPY RESULT
-    ============================================================
-    */
-
-    async function copyResult() {
-
-        const text =
-            document.getElementById(
-                "resultSensitivity"
-            ).textContent;
 
 
         /*
-        Only copy the actual numeric value.
+            Ctrl/Cmd + Shift + C
+            = Copy all
         */
 
-        let cleanText =
-            text.split(" ")[0];
+        if (
+            (event.ctrlKey ||
+             event.metaKey) &&
+            event.shiftKey &&
+            event.key.toLowerCase() === "c"
+        ) {
 
+            event.preventDefault();
 
-        try {
-
-            await navigator.clipboard.writeText(
-                cleanText
-            );
-
-
-            const button =
-                document.querySelector(
-                    ".copy-button"
-                );
-
-            const oldText =
-                button.textContent;
-
-            button.textContent =
-                "COPIED!";
-
-            setTimeout(
-                function() {
-
-                    button.textContent =
-                        oldText;
-
-                },
-                1200
-            );
-
-        }
-
-        catch (error) {
-
-            alert(
-                "Could not copy automatically."
-            );
+            document
+                .getElementById(
+                    "copyAllButton"
+                )
+                .click();
 
         }
 
     }
+);
 
 
-    /*
-    ============================================================
-    ENTER KEY
-    ============================================================
-    */
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
 
-    document.addEventListener(
-        "keydown",
-        function(event) {
+loadSettings();
 
-            if (
-                event.key === "Enter"
-            ) {
+loadFromURL();
 
-                convertSensitivity();
-
-            }
-
-        }
-    );
-
-
-    /*
-    ============================================================
-    UPDATE UI WHEN GAME CHANGES
-    ============================================================
-    */
-
-    document.getElementById(
-        "fromGame"
-    ).addEventListener(
-        "change",
-        updateMinecraftNote
-    );
-
-
-    updateMinecraftNote();
+convert();
 
 </script>
 
 </body>
-
 </html>
